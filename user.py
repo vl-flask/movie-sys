@@ -24,10 +24,47 @@ class User:
     def __repr__(self):
         return f"<User {self.name}>"
 
-    def save2csv(self):
-        fname = f"{self.name}.txt"
-        with open(fname, 'w') as f:
-            f.write(self.name + "\n")
-            for movie in self.movies:
-                pattern = "{},{},{}\n"
-                f.write(pattern.format(movie.name, movie.genre, movie.watched))
+    def json(self):
+        return {
+            'name': self.name,
+            'movies': [
+                movie.json() for movie in self.movies
+            ]
+        }
+
+    @classmethod
+    def from_json(cls, jsondata):
+        user = User(jsondata['name'])
+        movies = []
+        for movie_data in jsondata['movies']:
+            movies.append(Movie.from_json(movie_data))
+        user.movies = movies
+        print(user)
+        return user
+
+
+
+
+
+
+    # def save2csv(self):
+    #     fname = f"{self.name}.txt"
+    #     with open(fname, 'w') as f:
+    #         f.write(self.name + "\n")
+    #         for movie in self.movies:
+    #             pattern = "{},{},{}\n"
+    #             f.write(pattern.format(movie.name, movie.genre, movie.watched))
+    #
+    # @classmethod
+    # def load_csv(cls, fn):
+    #     with open(fn, 'r') as f:
+    #         content = f.readlines()
+    #         username = content[0][:-1]
+    #         movies = []
+    #         for line in content[1:]:
+    #             mdata = line.split(',')
+    #             movies.append(Movie(mdata[0], mdata[1], mdata[2]=='True'))
+    #         # user = User(username)
+    #         user = cls(username)
+    #         user.movies = movies
+    #         return user
